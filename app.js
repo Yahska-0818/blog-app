@@ -26,19 +26,18 @@ mongoose
 app.use(middleware.tokenExtractor)
 app.use(middleware.requestLogger)
 
+
 app.use('/api/blogs', middleware.userExtractor, blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
-app.use(express.static(path.join(__dirname, 'dist')));
-
-app.all('/{*any}', (req, res, next) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
+app.use(express.static(path.join(__dirname, 'dist')))
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next()
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
 module.exports = app
-
